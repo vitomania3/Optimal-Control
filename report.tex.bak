@@ -7,8 +7,9 @@
 \usepackage{amsfonts} 
 \usepackage{amssymb} 
 \usepackage{amsthm}
- \usepackage{float}
+\usepackage{float}
 
+\newtheorem{note}{Замечание}[section]
 \newtheorem{definition}{Определение}[section] 
 \newtheorem{theorem}{Теорема}[section] 
 \newtheorem{property}{Свойство}[section] 
@@ -82,7 +83,7 @@
 	\end{enumerate}
 	\textbf{Замечание.} Алгоритм построения оптимальной траектории не должен содержать перебра по параметрам, значения которых не ограничены, а также по более чем двум скалярным параматрам.
 	
-\section{Алгоритм решения}
+\section{Анализ решения}
 	Обозначим $ x = x_1, \; \dot{x} = x_2 $ и запишем обыкновенное дифференциальное уравнение второго порядка:
 	$$
 		\ddot{x} = u_1 - \dot{x}(1 + u_2), \; t \in [0, T],
@@ -98,29 +99,30 @@
 	с краевыми условиями
 	\begin{equation*}
 		\begin{cases}
-   			x_1(0) = 0, \\
+   			x_1(0) = \alpha, \\
    			x_2(0) = 0, \\
    			x_1(T) = L, \\
-   			\vert x_2(T) \vert \leqslant \varepsilon.
+   			\vert x_2(T) \vert \leqslant \varepsilon,
  		\end{cases}
 	\end{equation*}
+	где $ x_{min}, x_{max} $ --- некоторые заданные числа и $ \alpha \in [x_{min}, x_{max}]. $ \\
 	Рассмотрим уравнение 
 	$$
 		\dot{x_2} = u_1 - x_2(1 + u_2). 
 	$$
 	Решение данного уравнения даёт формула Коши:
 	$$
-		x_2(t) = \chi(t, t_0)x^0 + \int \limits_0^t \chi(t, \tau)f(\tau) d\tau,
+		x_2(t) = \chi(t, t_0)x_2(0) + \int \limits_{t_0}^t \chi(t, \tau)f(\tau) d\tau,
 	$$
 	где $ \chi(t, \tau) = \exp \left(- \int \limits_\tau^t (1 + u_2(s)) ds \right). $ \\
-	Подставляя $ f(\tau) = u_1, x^0 = (0, 0)^T $ в $ x_2(t), $ полчаем
+	Подставляя $ f(\tau) = u_1, x_2(0) = 0 $ в $ x_2(t), $ полчаем
 	\begin{equation}
 	\label{x2(t)}
-		x_2(t) = \int \limits_0^t u_1(\tau) \cdot \exp \left(- \int \limits_\tau^t (1 + u_2(s)) ds \right) d\tau
+		x_2(t) = \int \limits_{t_0}^t u_1(\tau) \cdot \exp \left(- \int \limits_\tau^t (1 + u_2(s)) ds \right) d\tau.
 	\end{equation}
 	Далее запишем функцию Гамильтона-Понтрягина
 	$$
-		H = \psi_0 u_1^2 + \psi_1 x_2 + \psi_2 (u_1 - x_2(1 + u_2)), 
+		H = \psi_0 u_1^2 + \psi_1 x_2 + \psi_2 (u_1 - x_2(1 + u_2))
 	$$
 	и сопряжённую систему
 	\begin{equation}
@@ -130,300 +132,247 @@
 			\dot{\psi_2} = - \psi_1 + \psi_2(1 + u_2).
    		\end{cases}
 	\end{equation}
-	Так как $ \dot{\psi_1} = 0, $ следовательно $ \psi_1 \equiv const. $
+	Так как $ \dot{\psi_1} = 0, $ следовательно $ \psi_1 \equiv const. $ Для удобства, здесь и всюду далее положим $ \psi_2^0 = \psi_2(0). $
 	
 \subsection{Случай, когда $ u_1 \geqslant 0, \; u_2 \in [0, k], k > 0 $}
-	\subsubsection{Случай, когда $ \psi_0 \neq 0 $}
-	 Из условия максимума определим оптимальное управление $ u^{\star}(t) = (u_1^{\star}(t), u_2^{\star}(t)). $ А для того чтобы избавиться от свободы выбора $ \psi^{\star}(\cdot), $ рассмотрим ``нормальный'' случай, т.е $ \psi_0 < 0. $ Без ограничения общности положим $ \psi_0 = -\dfrac{1}{2}. $
-	\begin{equation*}
+	\subsubsection{Ситуация, когда $ \psi_0 \neq 0 $}
+	\label{fisrtCase1}
+	Для того чтобы избавиться от свободы выбора $ \psi^{\star}(\cdot), $ рассмотрим ``нормальный'' случай, т.е $ \psi_0 < 0. $ Без ограничения общности положим $ \psi_0 = -\dfrac{1}{2}. $ Из условия максимума определим оптимальное управление $ u^{\star}(t) = (u_1^{\star}(t), u_2^{\star}(t)). $
+	\begin{equation}
+		\label{u1_Star}
 		u_1^{\star} = 
 		\begin{cases}
 			\psi_2, & \psi_2 \geqslant 0, \\
 			0, & \psi_2 < 0, \\   		
 		\end{cases}
-   	\end{equation*}
-   	\begin{equation*}
+   	\end{equation}
+   	\begin{equation}
+   		\label{u2_Star}
    		u_2^{\star} = 
 		\begin{cases}
 			0, & \psi_2 x_2 > 0, \\
 			[0, k], & \psi_2 x_2 = 0, \\ 
 			k, & \psi_2 x_2 < 0.
    		\end{cases}
-	\end{equation*}
-	Временно положим $ \psi_2(0) = \psi_2^0. $
+	\end{equation} 
+	
 	\begin{enumerate}
-		\item Пусть $ \psi_2^0 > 0. $ \\
-		Так как $ \psi_2^0 > 0 $ и $ \psi_2(t) $ --- непрерывна, то $ \exists \delta > 0: \psi_2(t) > 0, \; \forall t \in [0, \delta]. $
-		Следовательно $ u_1(t) = \psi_2(t) \; \forall t \in [0, \delta]. $ Подставляя найденное $ u_1(t) $ в формулу \eqref{x2(t)}, получим
-		$$
-			x_2(t) = \int \limits_0^t \psi_2(\tau) \cdot \exp \left(- \int \limits_\tau^t (1 + u_2(s)) ds \right) d\tau, \; \forall t \in [0, \delta].
-		$$ 
-		Пользуясь тем, что интеграл от неотрицательной подинтегральной функции  неотрицателен, можно сделать вывод: $ x_2(t) \geqslant 0, \; \forall t \geqslant 0. $ \\
-		Теперь, зная $ u_1(t), u_2(t) $, можно записать новую систему, состощую из вторых уравнений систем \eqref{odeSystem} и \eqref{conjSystem}
-		\begin{equation*}
+		\item Предположим, что $ \psi_2^0 > 0. $ Из  непрерывности функции $ \psi_2(t) $ следует, что  $ \exists \; \delta > 0: \psi_2(t) > 0, \; \forall t \in (0, \delta). $ Ввиду системы \eqref{u1_Star}: $ u_1^{\star}(t) = \psi_2(t) \; \forall t \in (0, \delta). $ Из формулы \eqref{x2(t)} следует, что $ x_2(t) > 0, \; \forall t \in (0, \delta). $ Значит из системы \eqref{u1_Star} следует, что $ u_2^{\star}(t) = 0, \; \forall t \in (0, \delta). $ \\
+		Теперь, зная $ u_1^{\star}(t), u_2^{\star}(t) $, можно записать новую систему, состощую из вторых уравнений систем \eqref{odeSystem} и \eqref{conjSystem}
+		\begin{equation}
+		\label{firstSystem}
 			\begin{cases}
 				\dot{x_2} = \psi_2 - x_2, \\
 				\dot{\psi_2} = -\psi_1 + \psi_2.   		
 			\end{cases}
-   		\end{equation*}
-   		Теперь решим эту систему. Начнём со второго уравнения
+   		\end{equation}
+   		Решим эту систему. Начнём со второго уравнения
    		$$
-   			\dot{\psi_2} = -\psi_1 + \psi_2.
+   			\dot{\psi_2}(t) = -\psi_1 + \psi_2(t).
    		$$
-   		Решать будем методом вариации постоянной, помня при этом, что $ \psi_1 \equiv const. $ И так, для начала решаем однородную 
-систему
-   		\begin{gather*}
-   			\dot{\psi_2} = \psi_2 \\
-   			\dfrac{d \psi_2(t)}{\psi_2(t)} = dt \\
-   			\ln \vert \psi_2(t) \vert = t + \tilde{C} \\
-   			\psi_2(t) = C e^t.
-   		\end{gather*}
-   		Далее $ C \rightarrow C(t) $ и подставляем в исходное уравнение
-   		\begin{gather*}
-   			C'(t) e^t + C(t) e^t = -\psi_1 + C(t) e^t \\
-   			C'(t) = - \psi_1 e^{-t} \\
-   			C(t) = \psi_1 e^{-t} + \tilde{C}.
-   		\end{gather*}
-   		Теперь подставляем $ C(t) $ в уравнение для $ \psi_2(t) $
+   		Решая данное уравнение методом вариации постоянной, получим
    		\begin{gather*}
 			\psi_2(t) = \psi_1 + \tilde{C} e^t.   			
    		\end{gather*}
-   		Подставляя краевое условие $ \psi_2(0) = \psi_2^0, $ в результате получим
-   		\begin{gather*}
-			\psi_2(t) = \psi_1 + (\psi_2^0 - \psi_1) e^t.   			
-   		\end{gather*}
-   		Теперь, зная $ \psi_2(t), $ можно найти
-   		\begin{gather*}
-			\dot{x_2}(t) = \psi_2(t) - x_2(t).   			
-   		\end{gather*}
-   		\begin{itemize}
-   			\item $ \psi_1 < \psi_2^0. $ \\ 
-   			Для этого воспользуемся методом вариации постоянной. Для начала решим однородное уравнение
-   			\begin{gather*}
-				\dot{x_2}(t) = - x_2(t) \\
-				\dfrac{d x_2(t)}{x_2(t)} = -dt \\
-   				\ln \vert x_2(t) \vert = -t + \tilde{C} \\
-   				x_2(t) = C e^{-t}.  			
-   			\end{gather*}
-   			Далее $ C \rightarrow C(t) $ и подставляем в исходное уравнение
-   			\begin{gather*}
-				C'(t) e^{-t} - C(t) e^{-t} = \psi_1 + (\psi_2^0 - \psi_1) e^t - C(t) e^{-t} \\
-				C'(t) = \psi_1 e^t + (\psi_2^0 - \psi_1) e^{2t} \\
-				C(t) = \psi_1 e^t + \frac{1}{2}(\psi_2^0 - \psi_1) e^{2t} + \tilde{C}.			  		
-   			\end{gather*}
-   			Теперь подставляем $ C(t) $ в уравнение для $ x_2(t) $
+   		Константу $ \tilde{C} $ найдём из краевого условия: $ \psi_2(0) = \psi_2^0, $ в результате получим
+   		\begin{gather}
+		\label{psi2}
+			\psi_2(t) = \psi_1 + (\psi_2^0 - \psi_1) e^t.
+   		\end{gather}
+   		
+%%%%%%% Search x2(), x1(). %%%%%
+
+		Для решения уравнения 
+			$$
+				\dot{x_2}(t) = \psi_2(t) - x_2(t),
+			$$   			
+тоже воспользуемся методом вариации постоянной. Решая, получим
    			\begin{gather*}
 				x_2(t) = \psi_1 + \frac{1}{2}(\psi_2^0 - \psi_1) e^{t} + \tilde{C} e^{-t}.   			
    			\end{gather*}
-   			Подставляя краевое условие $ x_2(0) = 0, $ в результате получим
-   			\begin{gather*}
-				x_2(t) = \psi_1 + \frac{1}{2}(\psi_2^0 - \psi_1) e^t - \psi_1 e^{-t} - \frac{1}{2}(\psi_2^0 - \psi_1) e^{-t} \\
-				x_2(t) = \psi_1(1 - e^{-t}) + (\psi_2^0 - \psi_1) \frac{e^t - e^{-t}}{2} \\
+   			Для нахождения константы $ \tilde{C}, $ воспользуемся краевым условием для системы \eqref{odeSystem}: $ x_2(0) = 0. $ В результате получим
+   			\begin{gather}
+   			\label{x2}
 				x_2(t) = \psi_1(1 - e^{-t}) + (\psi_2^0 - \psi_1) \sh(t).
-   			\end{gather*}
-   			И так, теперь, подставив $ x_2(t) $ в систему \eqref{odeSystem}, найдём $ x_1(t). $
+   			\end{gather}
+   			И так, теперь, подставив $ x_2(t) $ в первое уравнение системы \eqref{odeSystem}, найдём $ x_1(t). $
    			\begin{gather*}
 				\dot{x_1}(t) = \psi_1(1 - e^{-t}) + (\psi_2^0 - \psi_1) \sh(t) \\
 				x_1(t) = \psi_1(t + e^{-t}) + (\psi_2^0 - \psi_1) \ch(t) + \tilde{C}.
    			\end{gather*}
-			Подставляем краевые условия $ x_1(0) = 0 $ и получаем уравнение для $ x_1(t) $
-			\begin{gather*}
-				x_1(t) = \psi_1(t + e^{-t}) + (\psi_2^0 - \psi_1) \ch(t) - \psi_2^0.
-   			\end{gather*}
-   			Для нахождения $ \psi_2^0 $ воспользуемся краевым условием $ x_1(T) = L $
+			Подставляем краевое условие для системы \eqref{odeSystem}: $ x_1(0) = \alpha $ и получаем уравнение для $ x_1(t) $
+			\begin{gather}
+			\label{x1}
+				x_1(t) = \psi_1(t + e^{-t}) + (\psi_2^0 - \psi_1) \ch(t) + \alpha - \psi_2^0.
+   			\end{gather}
+   			Для нахождения $ \psi_2, $ воспользуемся краевым условием из системы \eqref{odeSystem}: $ x_1(T) = L $
    			\begin{gather*}
-				x_1(t) = L \\
 				\psi_1(T + e^{-T}) + (\psi_2^0 - \psi_1) \ch(T) - \psi_2^0 = L \\
-				\psi_2^0 = \frac{L + \psi_1(sh(T) - T)}{ch(T) - 1}
+				\psi_2^0 = \frac{L - \alpha + \psi_1( \sh(T) - T)}{\ch(T) - 1}.
    			\end{gather*}
-   			А для того чтобы найти $ \psi_1, $ воспользуемся краевым условием $ \vert x_2(T) \vert \leqslant \varepsilon. $ Также выше было показано, что $ x_2(t) \geqslant 0, \forall t \geqslant 0. $
-   			\begin{gather*}
-   				0 \leqslant x_2(t) \leqslant \varepsilon \\
-			 	0 \leqslant \psi_1(1 - e^{-T}) + \left(\frac{L + \psi_1(sh(T) - T)}{ch(T) - 1} - \psi_1 \right)\sh(T) \leqslant \varepsilon \\
-				0 \leqslant \psi_1 \left[ (1 - e^{-T}) + \frac{sh(T)(sh(T) - T)}{ch(T) - 1} - sh(T) \right] + \frac{L sh(T)}{ch(T) - 1} \leqslant \varepsilon \\
-				-\frac{L sh(T)}{ch(T) - 1} \leqslant \psi_1 \left[ (1 - e^{-T}) + \frac{sh(T)(sh(T) - T)}{ch(T) - 1} - sh(T) \right]  \leqslant \varepsilon - \frac{L sh(T)}{ch(T) - 1} \\
-				-L sh(T) \leqslant \psi_1 \left[ (1 - e^{-T}) \cdot (\ch(T) - 1) + sh(T)(1 - T - e^{-T}) \right]  \leqslant \varepsilon(\ch(T) - 1) - L sh(T) \\
-				-L sh(T) \leqslant \psi_1 g(T) \leqslant\varepsilon(\ch(T) - 1) - L sh(T),
-   			\end{gather*}
-   			где $ g(T) = (1 - e^{-T}) \cdot (\ch(T) - 1) + sh(T)(1 - T - e^{-T}) = 2(\ch(T) - 1) - T \sh(T). $ Исследуем знак $ g(T), \forall \; T > 0. $
-   			\begin{enumerate}
-				\item $ g(0) = 0, $
-				\item $ g'(T) = \sh(T) - T \ch(T), $
-				\item $ g'(0) = 0, $
-				\item $ g''(T) = -T \sh(T) < 0. $  			
-   			\end{enumerate}
-   			Следовательно $ g(T) < 0, \forall \; T > 0 $ и можно разделить неравенство на $ g(T). $
-   			\begin{gather*}
-   				\frac{\varepsilon(\ch(T) - 1) - L sh(T)}{2(\ch(T) - 1) - T \sh(T)} \leqslant \psi_1 \leqslant \frac{-L \sh(T)}{2(\ch(T) - 1) - T \sh(T)}  			
-   			\end{gather*}
-   			\item $ \psi_1 = \psi_2^0. $ И так, мы имеем систему
+   			Воспользовавшись краевым условием для системы \eqref{odeSystem}: $ \vert x_2(T) \vert \leqslant \varepsilon, $ найдём ограничение на $ \psi_1. $ 
+   			$$
+   				-(L - \alpha) \sh(T) \leqslant \psi_1 \cdot f(T) \leqslant \varepsilon(\ch(T) - 1) - (L - \alpha) \sh(T), 
+   			$$
+   			где $ f(T) = (1 - e^{-T})(\ch(T) - 1) + \sh(T)(1 - T - e^{-T}). $
+   			\begin{itemize}
+   				\item Если $ f(T) > 0, $ тогда 
+   				\begin{gather}
+   				\label{psi1_bound_1}
+   					\dfrac{-(L - \alpha) \sh(T)}{f(T)} \leqslant \psi_1 \leqslant \dfrac{\varepsilon(\ch(T) - 1) - (L - \alpha) \sh(T)}{f(T)};
+   				\end{gather}
+   				\item Если $ f(T) < 0, $ тогда 
+   				\begin{gather}
+   				\label{psi1_bound_2}
+   					\dfrac{\varepsilon(\ch(T) - 1) - (L - \alpha) \sh(T)}{f(T)} \leqslant \psi_1 \leqslant \dfrac{-(L - \alpha) \sh(T)}{f(T)}.
+   				\end{gather}
+   			\end{itemize}
+   			Далее будем исследоватть поведение функции $ \psi_2(t), $ при различных $ \psi_1, \psi_2^0. $
+			\begin{enumerate}
+			\item Предположим, что $ \psi_2^0 - \psi_1 > 0. $ Найдём производную функции $ \psi_2(t) $
+			$$
+				\psi_2'(t) = (\psi_2^0 - \psi_1) e^t.
+			$$
+			Сразу становится видно, что $ \psi_2'(t) > 0, \; \forall t \in [0, T]. $ Это значит, что функция $ \psi_2(t) $ строго возрастает при $ t \in [0, T]. $ Следовательно $ \psi_2(t) > 0, \; \forall t \in [0, T]. $ В силу \eqref{u1_Star}: $ u_1^{\star}(t) = \psi_2(t), \; \forall t \in [0, T]. $ \\
+			Из формулы \eqref{x2(t)} видно: $ x_2(t) > 0, \; \forall t \in (0, T]. $ Ну а раз так, то в силу \eqref{u2_Star}: $ u_2^{\star}(t) = 0, \; \forall t \in (0, T]. $
+   			\item Пусть теперь $ \psi_1 - \psi_2^0 = 0. $ Тогда получается, что $ \psi_2(t) > 0, \; \forall t \in [0, T]. $ В силу \eqref{u1_Star}: $ u_1^{\star}(t) = \psi_2(t), \; \forall t \in [0, T]. $ \\
+			Из формулы \eqref{x2(t)} видно: $ x_2(t) > 0, \; \forall t \in (0, T]. $ Ну а раз так, то в силу \eqref{u2_Star}: $ u_2^{\star}(t) = 0, \; \forall t \in (0, T]. $
+			
+   			Перепишем уравнения \eqref{psi2}, \eqref{x2}, \eqref{x1}
    			\begin{gather*}
    				\begin{cases}
-   					\psi_2(t) = \psi_2^ 0, \\
+   					\psi_2(t) = \psi_2^0, \\
    					x_2(t) = \psi_2^0(1 - e^{-t}), \\
-   					x_1(t) = \psi_2^0(t + e^{-t} - 1),
+   					x_1(t) = \psi_2^0(t + e^{-t} - 1) + \alpha,
    				\end{cases}  			
    			\end{gather*}
    			с краевыми условиями
    			\begin{gather*}
    				\begin{cases}
-   					\vert x_2(t) \vert = \vert \psi_2^0(1 - e^{-t}) \vert \leqslant \epsilon, \\
-   					x_1(T) = \psi_2^0(T + e^{-T} - 1) = L,
-   				\end{cases}
-   				\Leftrightarrow
-   				\begin{cases}
-   					\left \vert \frac{L(1 - e^{-t})}{T + e^{-T} - 1} \right \vert \leqslant \epsilon, \\
-   					\psi_2^0 = \frac{L}{T + e^{-T} - 1}.
+   					\vert x_2(T) \vert = \psi_2^0(1 - e^{-T}) \leqslant \varepsilon, \\
+   					x_1(T) = \psi_2^0(T + e^{-T} - 1) + \alpha = L.
    				\end{cases}
    			\end{gather*}
-   			Окончательно имеем
-   			\begin{gather*}
-   				\begin{cases}
-   					\psi_1 = \psi_2 = \frac{L}{T + e^{-T} - 1}, \\
-   					x_2(t) = \frac{L}{T + e^{-T} - 1}(1 - e^{-t}), \\
-   					x_1(t) = \frac{L}{T + e^{-T} - 1}(t + e^{-t} - 1),
-   				\end{cases}  			
-   			\end{gather*}
-   			при 
+   			Из второго краевого условия получаем
    			$$
-   				0 \leqslant \frac{L(1 - e^{-t})}{T + e^{-T} - 1} \leqslant \varepsilon.
+   				\psi_2^0 = \dfrac{L - \alpha}{T + e^{-T} - 1},
    			$$
-   			\item $ \psi_1 > \psi_2^0. $ \\
-   			Пусть теперь $ t_{пер} \in (0, T). $  %Имеет смысл рассматривать лишь те $ (\psi_1, psi_2^0), $ для которых $ \exists t_{пер} \in (0, T): \psi_2(t) = 0. $
-   			В момент времени $ t = t_{\text{пер}} $ управление $ u $ не определено однозначно. Но заметим, что $ \dot{\psi_2}(t_{\text{пер}}) = -\psi_1 < 0 $ и $ \psi_2(t_{\text{пер}}) = 0. $ Следовательно $ \exists \delta > 0 : \; \psi_2(t) < 0, \; \forall t \in [t_{\text{пер}}, t_{\text{пер}} + \delta]. $ \\
-   			Как было показано выше $ \forall t > 0 \; x_2(t) > 0, $ в том числе и для $ t = t_{\text{пер}} > 0. $
-   			Следовательно оптимальное управление принимает следующий вид $ u_1^{\star} = 0, u_2^{\star} = k. $ Справедлива следующая система
-   			\begin{gather*}
-   				\begin{cases}
-   					\dot{\psi_2}(t) = -\psi_1 + \psi_2(t)(1 + k), \\
-   					\dot{x_2}(t) = - x_2(t)(1 + k),
-   				\end{cases}  			
-   			\end{gather*}
-   			с начальными условиями
-   			\begin{gather*}
-   				\begin{cases}
-   					\psi_2(t_{\text{пер}}) = 0, \\
-   					x_2(t_{\text{пер}}) = \psi_1 (1 - e^{-t_{\text{пер}}}) + (\psi_2^0 - \psi_1) \sh(t_{\text{пер}}).
-   				\end{cases}  			
-   			\end{gather*}
-   			Сначала найдём $ \psi_2(t). $ Искать будем методом вариации постоянной. Для начала решаем однородное уравнение
-   			\begin{gather*}
-   				\dot{\psi_2} = \psi_2(1 + k). \\
-   				\frac{d \psi_2}{\psi_2} = (1 + k) dt \\
-   				\ln \vert \psi_2 \vert = (1 + k) t + \tilde{C} \\
-   				\psi_2 = C e^{(1 + k)t}.
-   			\end{gather*}
-   			Далее делаем замену $ C \rightarrow C(t). $
-   			\begin{gather*}
-   				C'(t) e^{(1 + k) t} + (1 + k) C(t) e^{(1 + k) t} = -\psi_1 + C(t) e^{(1 + k) t} (1 + k) \\
-   				C'(t) = -\psi_1 e^{-(1 + k) t} \\
-   				C(t) = \dfrac{1}{1 + k} \psi_1 e^{-(1 + k) t} + \tilde{C}.
-   			\end{gather*}
-   			Подставляем $ C(t) $ в выражение для $ \psi_2(t). $
-   			\begin{gather*}
-   				\psi_2(t) = \dfrac{1}{1 + k} \psi_1 + \tilde{C} e^{(1 + k) t}.
-   			\end{gather*}
-   			Подставляя начальное уловие, в результате получим
-   			\begin{gather*}
-   				\psi_2(t) = \dfrac{1}{1 + k} \psi_1 (1 -   e^{(1 + k)(t - t_{\text{пер}})}), \; \forall t >  t_{\text{пер}}.
-   			\end{gather*}
-   			Теперь найдём $ x_2(t). $
-   			\begin{gather*}
-  	 			\dot{x_2}(t) = - x_2(t)(1 + k) \\
-   				\frac{d x_2}{x_2} = -(1 + k) dt \\
-   				\ln \vert x_2 \vert = -(1 + k) t + \tilde{C} \\
-   				x_2 = C e^{-(1 + k) t}.
-   			\end{gather*}
-   			Подставляем краевое условие и получаем, что
-   			\begin{gather*}
-  	 			x_2(t) = (\psi_1 (1 - e^{-t_{\text{пер}}}) + (\psi_2^0 - \psi_1) \sh(t_{\text{пер}})) e^{-(1 + k) (t - t_{\text{пер}})}, \; \forall t > t_{\text{пер}}. 
-   			\end{gather*}
+   			а из первого
+   			$$
+   				0 \leqslant \dfrac{(L - \alpha)(1 - e^{-T})}{T + e^{-T} - 1} \leqslant \varepsilon.
+   			$$
    			
-   			Будем искать $ x_1 $ из уравнения 
-   			\begin{gather*}
-   				\dot{x_1}(t) = x_2(t). \\
-   				x_1(t) = -\frac{1}{1 + k} (\psi_1 (1 - e^{-t_{\text{пер}}}) + (\psi_2^0 - \psi_1) \sh(t_{\text{пер}})) e^{-(1 + k) (t - t_{\text{пер}})} + C
-   			\end{gather*}
-   			Для вычисления константы $ C, $ подставим $ t_{\text{пер}} $ в ранее найденную формулу для $ x_1(t). $ В итоге имеем
-   			\begin{gather*}
-   				x_1(t) = \frac{1}{1 + k} \left[ (\psi_1 (1 - e^{-t_{\text{пер}}}) + (\psi_2^0 - \psi_1) \sh(t_{\text{пер}})) \right](1 - e^{-(1 + k) (t - t_{\text{пер}})}) + \\
-+ \psi_1 (t_{\text{пер}} + e^{-t_{\text{пер}}}) + ( \psi_2^0 - \psi_1) ch(t_{\text{пер}}) - \psi_2^0,
-   			\end{gather*}
-   			где $ t > t_{\text{пер}}. $ \\
-   			Пользуясь тем, что $ \psi_2(t_{\text{пер}}) = 0 $ и формулой для $ \psi_2(t), $  полученной ранее, имеем
-   			\begin{gather*}
-   				\psi_1 = \frac{\psi_2^0 e^{t_{\text{пер}}}}{e^{t_{\text{пер}}} - 1}.
-   			\end{gather*}
-   			Подставляем $ \psi_1 $ в выражение для $ x_1(t): $
-   			\begin{gather*}
-   				x_1(t) = \frac{1}{1 + k} \left[ \psi_2^0 - \frac{\psi_2^0}{e^{t_{\text{пер}}} - 1} \sh(t_{\text{пер}}) \right](1 - e^{-(1 + k) (t - t_{\text{пер}})}) + \\
-+ \frac{\psi_2^0 e^{t_{\text{пер}}}}{e^{t_{\text{пер}}} - 1} (t_{\text{пер}} + e^{-t_{\text{пер}}}) - \frac{\psi_2^0}{e^{t_{\text{пер}}} - 1} ch(t_{\text{пер}}) - \psi_2^0 \\ 
-				x_1(t) = [\frac{1}{1 + k} \left[ e^{t_{\text{пер}}} - 1 - \sh(t_{\text{пер}}) \right](1 - e^{-(1 + k) (t - t_{\text{пер}})}) + \\
-+ e^{t_{\text{пер}}} (t_{\text{пер}} - 1) - ch(t_{\text{пер}}) + 2 ] \cdot \frac{\psi_2^0}{e^{t_{\text{пер}}} - 1}.
-			\end{gather*}
-			По условию $ x_1(T) = L. $
-			Положим
-			\begin{gather*}
-   				G(t_{\text{пер}}) = \frac{1}{1 + k} \left[ e^{t_{\text{пер}}} - 1 - \sh(t_{\text{пер}}) \right](1 - e^{-(1 + k) (T - t_{\text{пер}})}) + \\
-+ e^{t_{\text{пер}}} (t_{\text{пер}} - 1) - ch(t_{\text{пер}}) + 2.
-   			\end{gather*} Следовательно
-			\begin{gather*}
-				\psi_2^0 = \frac{L (e^{t_{\text{пер}}} - 1)}{G(t_{\text{пер}})}.
-   			\end{gather*}
-   		\end{itemize}
-   	\item Пусть $ \psi_2^0 = 0. $
-   	При $ \psi_2^0 = 0 $ управление определено неоднозначно. Но можно заметить, что 
+   			\item \label{firstCase_c}
+   			Пусть $ \psi_2^0 - \psi_1 < 0. $ Вычислим производную функции $ \psi_2(t) $ 
+   			$$
+				\psi_2'(t) = (\psi_2^0 - \psi_1) e^t.
+			$$
+			Сразу становится видно, что $ \psi_2'(t) < 0, \; \forall t \in [0, T]. $ Это значит, что функция $ \psi_2(t) $ строго убывает на всем промежутке времени $ [0, T]. $ А раз так, то $ \exists \; t_{\text{пер}} = \ln \left( -\dfrac{\psi_1}{\psi_2^0 - \psi_1} \right) > 0 : \psi_2(t_{\text{пер}}) = 0. $ \\
+			Теперь рассмотрим время, до момента переключения и после.
+			\begin{itemize}
+				\item Если $ t \in [0, t_{\text{пер}}), $ то $ \psi_2(t) > 0. $ Из формулы \eqref{x2(t)} следует, что $ x_2(t) > 0. $ Теперь мы можем выписать управление из систем \eqref{u1_Star}, \eqref{u2_Star}: $ u_1^{\star}(t) = \psi_2(t), u_2^{\star}(t) = 0. $
+				\item Если $ t \in [t_{\text{пер}}, T], $ то $ \psi_2(t) < 0. $ Из формулы \eqref{x2} следует, что $ x_2(t) > 0. $ Теперь можно выписать систему
+				\begin{gather*}
+   					\begin{cases}
+   						\dot{\psi}_2 = -\psi_1 + \psi_2(1 + k), \\
+   						\dot{x}_2 = - x_2(1 + k), \\
+   						\dot{x}_1 = x_2, 
+					\end{cases}  			
+   				\end{gather*}
+   		с начальными условиями
+   				\begin{gather*}
+   					\begin{cases}
+   						x_2(t_{\text{пер}}) = \psi_1(1 - e^{-t_{\text{пер}}}) + (\psi_2^0 - \psi_1) \sh(t_{\text{пер}}), \\
+   						x_1(t_{\text{пер}}) = \psi_1(t_{\text{пер}} + e^{-t_{\text{пер}}}) + (\psi_2^0 - \psi_1) \ch(t_{\text{пер}}) + \alpha - \psi_2^0, \\
+   						\psi_2(t_{\text{пер}}) =0.   							\end{cases}  			
+   				\end{gather*}
+   				Решая эту систему, получаем
+   				$$
+   					\psi_2(t) = \dfrac{\psi_1}{1 + k} \left(1 - e^{(1 + k)(t - t_{\text{пер}})} \right),
+   				$$
+   				$$
+   					x_2(t) =  \left( \psi_1(1 - e^{-t_{\text{пер}}}) + (\psi_2^0 - \psi_1) \sh(t_{\text{пер}})\right) e^{-(1 + k)(t - t_{\text{пер}})}.
+   				$$
+   				\begin{gather*}
+   					x_1(t) =  \dfrac{1}{1 + k}[\psi_1(1 - e^{-t_{\text{пер}}}) + (\psi_2^0 - \psi_1) \sh(t_{\text{пер}})](1 - e^{-(1 + k)(t - t_{\text{пер}})}) + \\ + \psi_1(t_{\text{пер}} + e^{-t_{\text{пер}}}) + (\psi_2^0 - \psi_1) \ch(t_{\text{пер}}) + \alpha - \psi_2^0.
+   				\end{gather*}
+   				Из формулы \eqref{psi2} можно выразить $ \psi_1 $ через $ \psi_2 $
+   				$$
+   					\psi_1 = \dfrac{\psi_2^0 e^{t_{\text{пер}}}}{e^{t_{\text{пер}}} - 1}.
+   				$$
+   				Подставляя $ \psi_1 $ в $ x_1(t), $ окончательно получим
+   				\begin{gather*}
+   					x_1(t) =  \dfrac{\psi_2^0}{e^{t_{\text{пер}}} - 1} \left(\dfrac{1}{1 + k}[e^{t_{\text{пер}}} - 1 - \sh(t_{\text{пер}})](1 - e^{-(1 + k)(t - t_{\text{пер}})}) - \ch(t_{\text{пер}}) + \right. \\ \left. + e^{t_{\text{пер}}}(t_{\text{пер}} - 1) + 2 \right) + \alpha.
+   				\end{gather*}
+   				Введём обозначение
+   				\begin{gather*}
+   					F(t_{\text{пер}}) = \dfrac{1}{1 + k}[e^{t_{\text{пер}}} - 1 - \sh(t_{\text{пер}})](1 - e^{-(1 + k)(T - t_{\text{пер}})}) - \ch(t_{\text{пер}}) + \\ + e^{t_{\text{пер}}}(t_{\text{пер}} - 1) + 2.
+   				\end{gather*}
+   				Тогда из условия: $ x_1(T) = L $ следует
+   				$$
+   					\psi_2^0 = \dfrac{(L - \alpha)(e^{t_{\text{пер}}} - 1)}{F(t_{\text{пер}})}.
+   				$$
+			\end{itemize}
+   		\end{enumerate}
+   	\item Пусть $ \psi_2^0 = 0. $ Тогда управление определено неоднозначно. Но можно заметить, что 
    	$$ 
    		\dot{\psi_2}(0) =  - \psi_1.
    	$$
    	\begin{itemize}
-   		\item $ \psi_1 < 0. $ \\
-   		Из того, что $ \dot{\psi_2} > 0 $ и $ \psi_2(0) = 0, $ следует
-		$$
-			\psi_2(t) > 0, \; \forall t \in (0, \delta).
-		$$
-		Из фомулы \eqref{x2(t)} и того, что $ u_1^{\star}  = \psi_2(t), $ следует  $ x_2 (t) > 0,  \; \forall t \in (0, \delta). $
-		Из этих двух фактов вытекает 
-		$$
-			x_2 \psi_2 > 0 \Rightarrow u_2 = 0.
-		$$
-		Теперь мы знаем оптимальное управление и можем выписать следующую систему
-		\begin{gather*}
-   				\begin{cases}
-   					\dot{\psi_2}(t) = -\psi_1 + \psi_2(t), \\
-   					\dot{x_2}(t) = \psi_2(t) - x_2.
-   				\end{cases}  			
-   		\end{gather*}
+   		\item Если $ \psi_1 < 0. $ Тогда $ \exists \; \delta > 0 : \psi_2(t) > 0, \; \forall t \in (0, \delta). $ В силу формулы \eqref{x2(t)}: $ x_2(t) > 0, \; \forall t \in (0, \delta). $ Учитывая системы \eqref{u1_Star}, \eqref{u2_Star}, можно выписать оптимальное управление $ u_1^{\star}(t) = \psi_2(t), u_2^{\star}(t) = 0, \; \forall t \in (0, \delta). $ \\
+		Тогда будет справедлива система \eqref{firstSystem}.
    		Как было показано выше, данная система при $ \psi_2^0 = 0 $ имеет следующее решение
    		\begin{gather*}
    				\begin{cases}
    					\psi_2(t) = \psi_1(1 - e^t), \\
    					x_2(t) = \psi_1(1 - \ch(t)), \\
-   					x_1(t) = \psi_1(t - \sh(t)).
+   					x_1(t) = \psi_1(t - \sh(t)) + \alpha.
    				\end{cases}  			
    		\end{gather*}
+   		Можно заметить, что $ \psi_2(t) > 0, \; \forall t \in (0, T]. $
    		Воспользовавшись краевым условием: $ x_1(T) = L, $ получаем
    		$$
-   			\psi_1 = \frac{L}{T - \sh(T)}.
+   			\psi_1 = \frac{L - \alpha}{T - \sh(T)}.
    		$$
-   		А из краевого условия $ \vert x_2(T) \vert \leqslant \varepsilon $ получаем ограничение на параметры $ L, T $
+   		А из краевого условия: $ \vert x_2(T) \vert \leqslant \varepsilon, $ получаем ограничение на параметры $ L, T $
    		$$
-   			0 \leqslant \frac{L(1 - \ch(T))}{T - \sh(T)} \leqslant \varepsilon.
+   			0 \leqslant \frac{(L - \alpha)(1 - \ch(T))}{T - \sh(T)} \leqslant \varepsilon.
    		$$
-   		\item $ \psi_1 = 0. $
-   		В этом случае получаем, что $ \psi_2 \equiv 0. $ Из формулы для $ u_1^{\star} $ и формулы для $ x_2(t) $ $ \Rightarrow x_2(t) \equiv 0. $
-   		В данном случае существует только единственное решение: $ L = 0. $
-   		\item $ \psi_1 > 0. $ \\
-   		Из того, что $ \dot{\psi_2} < 0 $ и $ \psi_2(0) = 0, $ следует
-		$$
-			\psi_2(t) < 0, \; \forall t \in (0, \delta).
-		$$
-		Из формулы для $ \psi_2 $ видно, что $ \psi_2(t) < 0, \forall t > 0. $
-		Следовательно $ x_2(t) = 0, \forall t > 0. $ В результате имеем, что задача имеет решение при $ L = 0. $		 
+   		\item Если $ \psi_1 > 0. $ Тогда $ \exists \; \delta > 0 : \psi_2(t) < 0, \; \forall t \in (0, \delta). $ В силу формулы \eqref{x2(t)}: $ x_2(t) = 0, \; \forall t \in (0, \delta). $ Как можно заметить, $ \dot{\psi_2}( t_{\text{нач}}) < 0. $ В этом случае мы сможем добиться того, чтобы $ \psi_2(t) > 0. $ Следовательно $ x_2(t) = 0, \; \forall t \in [0, T]. $
+		\item Если $ \psi_1 = 0. $ В этом случае получаем противоречие с условием нетривиальности вектора сопряжённых переменных. 
    	\end{itemize}
-   	\item $ \psi_2^0 < 0. $ \\
-   	В силу непрерывности $ \psi_2(t) < 0, \; \forall t  \in [0, \delta]. $ Из формулы для $ u_1^{\star} $ и формулы для $ x_2(t) $ $ \Rightarrow x_2(t) = 0, \forall t \in [0, \delta]. $
-
+   	\item Пусть $ \psi_2^0 < 0. $ \\
+   	\label{u1PosPsi_2^0<0}
+   	В силу непрерывности $ \psi_2(t) < 0, \; \forall t  \in (0, \delta). $ И системы \eqref{u1_Star} cледует, что $ u_1^{\star}(t) =  0, \; \forall t \in (0, \delta). $ Тогда по формуле \eqref{x2(t)} получается, что $ x_2(t) =  0, \; \forall t \in (0, \delta). $ Предположим, что $ \exists \; t_{\text{нач}} > 0 : \psi_2(t_{\text{нач}}) = 0. $ Если мы вычислим производную функции $ \psi_2(t) $ в точке $ t_{\text{нач}}, $ то увидим, что
+	\begin{enumerate}
+		\item если $ \psi_1 > 0, $ тогда $ \dot{\psi_2}(t_{\text{нач}}) < 0. $ Этот случай не интересен, так как $ \dot{\psi_2}(t) $ в момент времени $ t = t_{\text{нач}} $ всегда отрицательна. Это значит, что $ x_2(t) = 0, \; \forall t \in [0, T].  $
+		\item если $ \psi_1 = 0, $ тогда возникает противоречие с нетривиальностью вектора сопряжённых переменных.
+		\item если $ \psi_1 < 0, $ тогда $ \dot{\psi_2}(t_{\text{нач}}) > 0. $ Это значит, что $ \exists \; \delta > 0 : \psi_2(t) > 0, \; \forall t \in (t_{\text{нач}}, \delta). $ В силу системы \eqref{u1_Star}, \eqref{u2_Star}: $ u_1^{\star} = \psi_2(t), u_2^{\star} = k. \; \forall t \in (t_{\text{нач}}, \delta). $ Теперь мы можем выписать новую систему
+		\begin{gather*}
+   				\begin{cases}
+   					\dot{\psi_2} = - \psi_1 + \psi_2(1 + k), \\
+   					\dot{x}_2 = \psi_2 - x_2(1 + k). \\
+   				\end{cases}
+   		\end{gather*}   	
+   		Решим первое уравнение этой системы с краевым условием: $ \psi_2(t_{\text{нач}}) = 0 $
+   		\begin{gather*}
+   			\psi_2(t) = \dfrac{\psi_1}{1 + k} \left( 1 - e^{(1 + k) (t - t_{\text{нач}})} \right).
+   		\end{gather*}
+   		Как можно видеть, $ \psi_2(t) > 0, \; \forall t \in (t_{\text{нач}}, T]. $ Ввиду формулы \eqref{x2(t)}: $ x_2(t) > 0, \; \forall t \in (t_{\text{нач}}, T]. $
+   		Решим второе уравнение этой системы с краевым условием: $ x_2(t_{\text{нач}}) = 0 $
+   		\begin{gather*}
+   			x_2(t) = \dfrac{\psi_1}{(1 + k)^2} [ 1 -  \ch((1 + k)(t - t_{\text{нач}}))].
+   		\end{gather*}
+   		Зная $ x_2(t) $ и краевое условие: $ x_1(t_{\text{нач}}) = \alpha, $ можно найти $ x_1(t) $
+   		\begin{gather*}
+   			x_1(t) = \dfrac{\psi_1}{(1 + k)^2} \left[ t - t_{\text{нач}} -  \dfrac{1}{1 + k}\sh((1 + k)(t - t_{\text{нач}})) \right] + \alpha.
+   		\end{gather*}
+   		Из краевого условия: $ x_1(T) = L, $ можно найти $ \psi_1 $
+   		\begin{gather*}
+   			\psi_1 = \dfrac{(L - a) (1 + k)^3}{(T - t_{\text{нач}})(1 + k) - \sh((1 + k)(T - t_{\text{нач}}))}.
+   		\end{gather*}
+   		Вспоминая краевое условие: $ x_2(T) \leqslant \varepsilon, $ получим ограничение на $ t_{\text{нач}}. $
+   		\end{enumerate}	 		
 	\end{enumerate}
 	
 	\subsubsection{Случай, когда $ \psi_0 = 0 $ }
@@ -446,28 +395,176 @@
    		\end{cases}
 	\end{equation*}	
 
-	Нам интересны только конечные управления $ \Rightarrow \psi_2(t) \leqslant 0, \forall t > 0. $	
-	
 	\begin{enumerate}
-		\item $ \psi_2^0 < 0. $
+		\item Случай $ \psi_2(t) > 0 $ мы не рассматриваем, ввиду того, что $ u_1(t) $ становится неограниченным.
+		\item Пусть $ \psi_2^0 < 0. $ Ввиду непрерывности функции $ \psi_2(t), \exists \; \delta > 0 : \psi_2(t) < 0, \; \forall t \in (0, \delta). $ Пердположим, что $ \exists \; t_{\text{нач}} > 0 : \psi_2(t_{\text{нач}}) = 0. $ И так, рассмотрим случай до мемента переключения и после.
+		\begin{enumerate}
+			\item Если $ t \in [0, t_{\text{нач}}), $ то $ \psi_2(t) < 0. $ По формуле \eqref{x2(t)}: $ x_2(t) = 0. $
+			\item Если $ t = t_{\text{нач}}, $ то посмотрим на производную $ \dot{\psi_2}(t) = - \psi_1. $ Видно, что
+			\begin{itemize}						
+			\item если $ \psi_1 > 0, $ то $ \dot{\psi_2}(t) < 0, $ а значит $ \exists \; \delta > 0 : \psi_2(t) < 0 \Rightarrow x_2(t) = 0. $
+			\item если $ \psi_1 < 0, $ то $ \dot{\psi_2}(t) > 0, $ а значит $ \exists \; \delta > 0 : \psi_2(t) > 0. $ Этот случай нам не интересен, поскольку управление не ограничено.
+			\item если $ \psi_1 = 0, $ то возникает противоречие с нетривиальностью вектора сопряжённых переменных.
+			\end{itemize}
+		\end{enumerate}
+		И так, в данном случае не существует оптимального оправления.
+		\item Пусть $ \psi_2^0 = 0. $ Значит $ \dot{\psi_2}(0) = - \psi_1. $
 		\begin{itemize}
-			\item $ \psi_1 \geqslant 0 $ и $ \psi_2(t) < 0, \forall t > 0. $ \\
-			В таком случае $ \dot{\psi_2}(t) < 0, \forall t > 0. $ Следовательно $ u_1^{\star} = 0 \Rightarrow x_2(t) \equiv 0, \forall t > 0. $ Данная система имеет решение при $ L = 0. $
-			\item $ \psi_1 = 0 $ и $ \psi_2(t) = 0, \forall t > 0. $ \\
-			В этом случае $ \dot{\psi_2}(t) \equiv 0, \forall t > 0. $
-			\item $ \psi_1 < 0. $ \\
-			$ \dot{\psi_2}(t) = - \psi_1 \Leftrightarrow \exists t_{\text{пер}}: $ при $ t = t_{\text{пер}}  \; \psi_2(t) = 0. $ \\
-			Пусть $ t_{\text{пер}} \in (0, T). $ Тогда   $ \dot{\psi_2}(t_{\text{пер}}) > 0. $ Следовательно для $ \forall \delta > 0 \;  \psi_2(t_{\text{пер}} + \delta) > 0. $ Но тогда $ u_1^{\star}(t_{\text{пер}} + \delta) = +\infty. $ \\
-			Пусть $ t_{\text{пер}} \not \in (0, T). $
-		\end{itemize}
-		\item $ \psi_2^0 = 0. $ Значит $ \dot{\psi_2} = - \psi_1. $
-		\begin{itemize}
-			\item $ \psi_1 = 0. $ \\
-			Возникает противоречие с нетривиальностью вектора сопряжённых переменных.
+			\item Если $ \psi_1 = 0, $ то возникает противоречие с нетривиальностью вектора сопряжённых переменных.
 			\item Рассмотрим случай, когда $ \psi_1 > 0. $ \\ 
-			Положим $ t_0 = 0. $ В данном случае $ \dot{\psi_2}(t_0) = -\psi_1 \Rightarrow \dot{\psi_2}(t_0) < 0. $ Следовательно существует окрестность точки $ t_0, $ в которой функция $ \psi_2(t) $ положительна, т.е. $ \exists \; \delta > 0 : \psi_2(t) < 0, \forall t \in (t_0, \delta]. $ Промежуток времени $ [-\delta,  t_0) $ не рассматривается, ввиду ввиду неотрицательности аргумента функции $ \psi_2(t). $ Мы получаем, что $ u_1^{\star}(t) = 0, \;  \forall t \in (t_0, \delta]. $ Следователно $ x_2(t) = 0, \;  \forall t \in (t_0, \delta]. $
+			В данном случае $ \dot{\psi_2}(0) = -\psi_1 \Rightarrow \dot{\psi_2}(0) < 0. $ Следовательно $ \exists \; \delta > 0 : \psi_2(t) < 0, \forall t \in (0, \delta). $ Мы получаем, что $ x_2(t) = 0, \;  \forall t \in (0, \delta). $ 	
 			\item Рассмотрим случай, когда $ \psi_1 < 0. $ \\
-			Положим $ t_0 = 0. $ В данном случае $ \dot{\psi_2}(t_0) = -\psi_1 \Rightarrow \dot{\psi_2}(t_0) > 0. $ Следовательно существует окрестность точки $ t_0, $ в которой функция $ \psi_2(t) $ положительна, т.е. $ \exists \; \delta > 0 : \psi_2(t) > 0, \forall t \in (t_0, \delta]. $ Промежуток времени $ [-\delta,  t_0) $ не рассматривается, ввиду ввиду неотрицательности аргумента функции $ \psi_2(t). $ Этот случай не представляет интереса, потому что мы рассматриваем только конечное управление, а мы получили, что $ u_1^{\star}(t) = +\infty, \; \forall t \in (t_0, \delta]. $
+			В данном случае $ \dot{\psi_2}(0) = -\psi_1 \Rightarrow \dot{\psi_2}(0) > 0. $ Следовательно $ \exists \; \delta > 0 : \psi_2(t) > 0, \forall t \in (0, \delta). $ Мы не рассматриваем данный случай, так как управление не ограничено.
 		\end{itemize}
-	\end{enumerate}		
+		Получается, что в данном случае тоже не существует оптимального управления.
+	\end{enumerate}	
+\subsection{Случай, когда $ u_1 \in \mathbb{R}, u_2 \in [0, k], \; k > 0 $}	
+	\subsubsection{Случай, когда $ \psi_0 \neq 0 $}
+	Как и ранее рассмотрим $ \psi_0 = - \dfrac{1}{2}. $ Из условия максимума определим управление, $ u^{\star}(t) = (u_1^{\star}(t), u_2^{\star}(t)), $ подозреваемое на оптимальность.
+	\begin{gather}
+	\label{secondCase_u1u2}
+		u_1^{\star} = \psi_2(t), \; \;
+		u_2^{\star} = 
+   		\begin{cases}
+   			0, & \psi_2 x_2 > 0, \\
+			[0, k], & \psi_2 x_2 = 0, \\ 
+			k, & \psi_2 x_2 < 0.
+   		\end{cases}  			
+   	\end{gather}
+   	Можно заметить, вектор управления будет выглядеть следующим образом $ u^{\star}(t) = (\psi_2(t), 0). $ Это вытекает из формулы \eqref{x2(t)}, а именно то, что $ \psi_2(t) $ и $ x_2(t) $ всегда будут отдного знака, за исключением одного случая, когда $ \psi_2(t) = 0. $ В этом случае вектор управления определяется неоднозначно.
+   	\begin{enumerate}
+   		\item Пердположим, что $ \psi_2^0 > 0. $ Данный случай полностью соответсвует случаю, когда $ \psi_2^0 > 0, $ в \eqref{fisrtCase1}, за исключением пункта \eqref{firstCase_c} при $ t \in (t_{\text{пер}}, T]. $ \\
+   		В этом случае $ \psi_2(t) < 0. $ Из формулы \eqref{x2(t)} следует, что $ x_2(t) < 0. $ Поэтому, в силу системы \eqref{secondCase_u1u2}, можно записать следующую систему
+   		\begin{gather*}
+   			\begin{cases}
+   				\dot{x_2} = \psi_2  - x_2, \\
+   				\dot{\psi_2} = -\psi_1 + \psi_2,
+   			\end{cases}  			
+   		\end{gather*}
+   	с краевыми условиями
+   	\begin{gather*}
+   			\begin{cases}
+   				x_2(t_{\text{пер}}) = \psi_1(1 - e^{-t_{\text{пер}}}) + (\psi_2^0 - \psi_1) \sh(t_{\text{пер}}), \\
+   				\psi_2(t_{\text{пер}}) = 0.
+   			\end{cases}  			
+   		\end{gather*}
+   	Решим эту систему. Начнём со второго уравнения
+   		$$
+   			\dot{\psi_2}(t) = -\psi_1 + \psi_2(t).
+   		$$
+   		Решая данное уравнение методом вариации постоянной, получим
+   		\begin{gather*}
+			\psi_2(t) = \psi_1 + \tilde{C} e^t.   			
+   		\end{gather*}
+   		Константу $ \tilde{C} $ найдём из краевого условия: $ \psi_2(t_{\text{пер}}) = 0, $ в результате получим
+   		\begin{gather*}
+			\psi_2(t) = \psi_1(e^{t - t_{\text{пер}}} - 1).
+   		\end{gather*}
+   		
+%%%%%%% Search x2(), x1(). %%%%%
+
+		Тогда, для решения уравнения 
+			$$
+				\dot{x_2}(t) = \psi_2(t) - x_2(t),
+			$$   			
+воспользуемся методом вариации постоянной. Решая, получим
+   			\begin{gather*}
+				x_2(t) = \psi_1 + \frac{1}{2}(\psi_2^0 - \psi_1) e^{t} + \tilde{C} e^{-t}.   			
+   			\end{gather*}
+   			Для нахождения константы $ \tilde{C}, $ воспользуемся краевым условием: $ x_2(t_{\text{пер}}) = \psi_1(1 - e^{-t_{\text{пер}}}) + ( \psi_2^0 - \psi_1) \sh(t_{\text{пер}}). $ В результате получим
+   			\begin{gather*}
+				x_2(t) = \dfrac{\psi_1}{2}e^{t - t_{\text{пер}}} - \psi_1 + \left(\dfrac{3}{2} \psi_1 - \psi_1 e^{-t_{\text{пер}}} + ( \psi_2^0 - \psi_1) \sh(t_{\text{пер}}) \right) e^{t_{\text{пер}} - t}.
+   			\end{gather*}
+   			И так, используя краевое условие: $ x_1(t_{\text{пер}}) = \psi_1(t_{\text{пер}} - e^{-t_{\text{пер}}}) + (\psi_2^0 - \psi_1) \ch(t_{\text{пер}}) + \alpha - \psi_2^0$, найдём $ x_1(t). $
+   			\begin{gather*}
+				x_1(t) = \dfrac{\psi_1}{2}e^{t - t_{\text{пер}}} - \psi_1 t - \left( \dfrac{3}{2}\psi_1 - \psi_1 e^{-t_{\text{пер}}} + (\psi_2^0 - \psi_1) \sh(t_{\text{пер}}) \right) e^{t_{\text{пер}} - t} + \\ + 2\psi_1(t_{\text{пер}} - e^{-t_{\text{пер}}}) + (\psi_2^0 - \psi_1)\left(e^{-t_{\text{пер}}} - 1 \right) + \alpha.
+   			\end{gather*}
+   			Для нахождения $ \psi_1, $ воспользуемся краевым условием из системы \eqref{odeSystem}: $ x_1(T) = L $
+   			\begin{gather*}
+				\psi_1 = \dfrac{L + \psi_2^0(e^{-t_{\text{пер}}} - 1 - \sh(t_{\text{пер}})e^{t_{\text{пер}} - T}) + \alpha}{\sh(T - t_{\text{пер}}) - T + e^{-T} + (\sh(t_{\text{пер}}) - 1)e^{t_{\text{пер}} - T} + 2 t_{\text{пер}} - 3e^{-t_{\text{пер}}} + 1}.
+   			\end{gather*}
+   			Воспользовавшись краевым условием для системы \eqref{odeSystem}: $ \vert x_2(T) \vert \leqslant \varepsilon, $ найдём ограничение на $ t_{\text{пер}}. $
+   		\item Пусть $ \psi_2^0 < 0. $
+   		Из непрерывности $ \psi_2(t) $ следует, что $ \psi_2(t) < 0, \; \forall t \in (0, \delta). $ Из формулы \eqref{x2(t)} следует, что $ x_2(t) < 0, \; \forall t \in (0, \delta). $ Получается следующий вектор управления $ u^{\star}(t) = (\psi_2(t), 0) $ и новая система
+   		\begin{gather*}
+   			\begin{cases}
+   				\dot{x_2} = \psi_2 - x_2, \\
+   				\dot{\psi_2} = -\psi_1 + \psi_2.
+   			\end{cases}  			
+   		\end{gather*}
+   		Для данной системы справедливы формулы \eqref{psi2}, \eqref{x2}, \eqref{x1}.
+   		\begin{enumerate}
+			\item Предположим, что $ \psi_2^0 - \psi_1 > 0. $ Найдём производную функции $ \psi_2(t) $
+			$$
+				\psi_2'(t) = (\psi_2^0 - \psi_1) e^t.
+			$$
+			Сразу становится видно, что $ \psi_2'(t) > 0, \; \forall t \in [0, T]. $ Это значит, что функция $ \psi_2(t) $ строго возрастает при $ t \in [0, T]. $ Следовательно $ \exists \; t_{\text{пер}} > 0 : \psi_2(t_{\text{пер}}) = 0. $ Ввиду системы \eqref{secondCase_u1u2}, вектор управления, после момента переключения, останется тем же, т.е. $ u^{\star}(t) = (\psi_2(t), 0). $
+   			\item Пусть теперь $ \psi_1 - \psi_2^0 = 0. $ Тогда получается, что $ \psi_2(t) < 0, \; \forall t \in [0, T]. $ В силу \eqref{secondCase_u1u2}: $ u_1^{\star}(t) = \psi_2(t), \; \forall t \in [0, T]. $ \\
+			Из формулы \eqref{x2(t)} видно: $ x_2(t) < 0, \; \forall t \in [0, T]. $ Ну а раз так, то в силу \eqref{secondCase_u1u2}: $ u_2^{\star}(t) = 0, \; \forall t \in [0, T]. $ Следовательно никаких переключений не будет на $ [0, T]. $
+   			\item Пусть $ \psi_2^0 - \psi_1 < 0. $ Вычислим производную функции $ \psi_2(t) $ 
+   			$$
+				\psi_2'(t) = (\psi_2^0 - \psi_1) e^t.
+			$$
+			Сразу становится видно, что $ \psi_2'(t) < 0, \; \forall t \in [0, T]. $ Это значит, что функция $ \psi_2(t) $ строго убывает на всем промежутке времени $ [0, T]. $ Следовательно никаких переключений не будет на $ [0, T]. $
+   		\end{enumerate}
+   		 \item Пусть $ \psi_2^0 = 0. $ Посмотрим производную функции $ \psi_2(t) $ в нуле
+   		$$
+			\psi_2'(0) = - \psi_1.
+		$$
+		Возножны три случая:
+		\begin{enumerate}
+			\item если $ \psi_1 = 0, $ тогда возникает противоречие с нетривиальностью вектора сопряжённых переменных.
+			\item если $ \psi_1 > 0, $ тогда $ \exists \; \delta > 0 : \psi_2(t) < 0, \; \forall t \in (0, \delta). $ А раз так, то по формуле \eqref{secondCase_u1u2}: $ x_2(t) < 0, \; \forall t \in (0, \delta). $ Выпишем вектор управления $ u^{\star}(t) = (\psi_2(t), 0) $ и систему, отвечающую этому управлению 
+		\begin{gather*}
+   			\begin{cases}
+   				\dot{x_2} = \psi_2 - x_2, \\
+   				\dot{\psi_2} = -\psi_1 + \psi_2.
+   			\end{cases}  			
+   		\end{gather*}
+   		Для данной системы справедливы формулы \eqref{psi2}, \eqref{x2}, \eqref{x1}.
+			Найдём производную функции $ \psi_2(t) $
+			$$
+				\psi_2'(t) = - \psi_1 e^t.
+			$$
+			Сразу становится видно, что $ \psi_2'(t) < 0, \; \forall t \in [0, T]. $ Это значит, что функция $ \psi_2(t) $ строго убывает при $ t \in [0, T]. $ Следовательно никаких переключений не будет на $ [0, T]. $
+			\item если $ \psi_1 < 0, $ тогда $ \exists \; \delta > 0 : \psi_2(t) > 0, \; \forall t \in (0, \delta). $ А раз так, то по формуле \eqref{secondCase_u1u2}: $ x_2(t) > 0, \; \forall t \in (0, \delta). $ Выпишем вектор управления $ u^{\star}(t) = (\psi_2(t), 0) $ и систему, отвечающую этому управлению 
+		\begin{gather*}
+   			\begin{cases}
+   				\dot{x_2} = \psi_2 - x_2, \\
+   				\dot{\psi_2} = -\psi_1 + \psi_2.
+   			\end{cases}  			
+   		\end{gather*}
+   		Для данной системы справедливы формулы \eqref{psi2}, \eqref{x2}, \eqref{x1}.
+			Найдём производную функции $ \psi_2(t) $
+			$$
+				\psi_2'(t) = - \psi_1 e^t.
+			$$
+			Сразу становится видно, что $ \psi_2'(t) > 0, \; \forall t \in [0, T]. $ Это значит, что функция $ \psi_2(t) $ строго возрастает при $ t \in [0, T]. $ Следовательно никаких переключений не будет на $ [0, T]. $
+		\end{enumerate}
+   	\end{enumerate}
+   	\subsubsection{Случай, когда $ \psi_0 = 0 $}
+	Выпешем из условия максимума оптимальное управление $ u^{\star}(t) = (u_1^{\star}(t), u_2^{\star}(t)). $
+	\begin{equation*}
+		u_1^{\star} = 
+		\begin{cases}
+			-\infty, & \psi_2 < 0, \\
+			\mathbb{R}, & \psi_2 = 0, \\ 
+			+\infty, & \psi_2 > 0,
+   		\end{cases}
+   	\end{equation*}
+   	\begin{equation*}
+   		u_2^{\star} = 
+		\begin{cases}
+			0, & \psi_2 x_2 > 0, \\
+			[0, k], & \psi_2 x_2 = 0, \\ 
+			k, & \psi_2 x_2 < 0.
+   		\end{cases}
+	\end{equation*}
+	Нас интересуют только конечные управления, следовательно $ u_1^{\star} = \mathbb{R} \Leftrightarrow \psi_2  \equiv 0. $
+	В результате управление не определено, и следовательно наша система не является управляемой.
+\section{Выводы}
+	И так, чтобы вычислить оптимальное управление, нужно перебрать все управления, подозреваемые на оптимальность и посмотреть, какое из них минимизурет функционал $ J = \int \limits_0^T u_1^2(t)dt \rightarrow \min \limits_{u(\cdot)}. $ 
+\section{Особенности реализации программы}
+	В некоторых случаях нам нужно оценить время переключния. Для этого нужно решить трансцендентное уравнение. Для решения используется функция \texttt{fzero(fun, [x0, x1])}. \\
+	В формулах \eqref{psi1_bound_1}, \eqref{psi1_bound_2} мы перебераем по $ \psi_1 $ из соответствующего промежутка и подставляем в формулы для $ x_2(t), x_1(t). $ 
 \end{document}
